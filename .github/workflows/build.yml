@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
-      - run: npm install
+      - run: npm install --force
       - uses: actions/setup-java@v1
         with:
           java-version: 11
