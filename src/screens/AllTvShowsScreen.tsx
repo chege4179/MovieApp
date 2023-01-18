@@ -1,14 +1,14 @@
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import React from "react";
-import AllMoviesScreen from "./AllMoviesScreen";
 
 
 const AllTvShowsScreen = () => {
      return (
           <View>
+               <Text>Tv shows</Text>
 
           </View>
      );
 };
 
-export default AllMoviesScreen;
+export default AllTvShowsScreen;
