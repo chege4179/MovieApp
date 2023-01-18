@@ -39,6 +39,7 @@ const SingleMovieScreen = () => {
                               <Text style={styles.movieOverViewTitle}>Overview : </Text>
                               <Text style={styles.movieOverView}>{data?.overview}</Text>
                               <Text style={styles.movieRuntime}>Runtime : {data?.runtime} mins</Text>
+                              <Text style={styles.movieRuntime}>Release Date : {data?.release_date}</Text>
                          </View>
                     </View>
                )}
