@@ -1,3 +1,4 @@
+// @ts-ignore
 import {API_KEY_TOKEN} from "@env"
 
 const BASE_URL :string = "https://api.themoviedb.org/3"

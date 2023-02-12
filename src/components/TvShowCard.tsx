@@ -13,7 +13,7 @@ type TvShowCardProps = {
 const TvShowCard = ({ tvshow }:TvShowCardProps) => {
      const navigation = useNavigation()
      const goToSingleMovieScreen = () => {
-          navigation.navigate(Screens.SINGLE_MOVIE_SCREEN,{
+          navigation.navigate(Screens.SINGLE_TV_SHOW_SCREEN,{
                id:tvshow.id
           })
      }

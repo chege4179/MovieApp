@@ -11,8 +11,9 @@ const SingleMovieScreen = () => {
      const route = useRoute();
      const { id } = route.params;
 
-     const { isLoading, error, data } = useQuery<MovieDetails>([id], () =>
-          fetch(`${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`)
+     const { isLoading, error, data } = useQuery<MovieDetails>(
+          ["movie/"+id],
+          () => fetch(`${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`)
                .then(res => res.json()),
      );
      useLayoutEffect(() => {
@@ -25,25 +26,28 @@ const SingleMovieScreen = () => {
 
      return (
           <View style={styles.container}>
-               {isLoading && (<ActivityIndicator animating={true} size="large" />)}
-               {data && (
-                    <View>
-                         <Image
-                              source={{
-                                   uri: getPosterPath(data?.poster_path),
-                              }}
-                              style={styles.image}
-                         />
-                         <View style={styles.movieInfoContainer}>
-                              <Text style={styles.movieTitle}>{data?.original_title}</Text>
-                              <Text style={styles.movieOverViewTitle}>Overview : </Text>
-                              <Text style={styles.movieOverView}>{data?.overview}</Text>
-                              <Text style={styles.movieRuntime}>Runtime : {data?.runtime} mins</Text>
-                              <Text style={styles.movieRuntime}>Release Date : {data?.release_date}</Text>
+               <>
+                    {isLoading && (<ActivityIndicator animating={true} size="large" />)}
+                    {data && (
+                         <View>
+                              <Image
+                                   source={{
+                                        uri: getPosterPath(data?.poster_path),
+                                   }}
+                                   style={styles.image}
+                              />
+                              <View style={styles.movieInfoContainer}>
+                                   <Text style={styles.movieTitle}>{data?.original_title}</Text>
+                                   <Text style={styles.movieOverViewTitle}>Overview : </Text>
+                                   <Text style={styles.movieOverView}>{data?.overview}</Text>
+                                   <Text style={styles.movieRuntime}>Runtime : {data?.runtime} mins</Text>
+                                   <Text style={styles.movieRuntime}>Release Date : {data?.release_date}</Text>
+                              </View>
                          </View>
-                    </View>
-               )}
-               {error && (<Text>{JSON.stringify(error)}</Text>)}
+                    )}
+                    {error && (<Text>{JSON.stringify(error)}</Text>)}
+               </>
+
           </View>
      );
 };
