@@ -1,21 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { ActivityIndicator, Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import { API_KEY, BASE_URL } from "../util/BaseURL";
 import QueryKeys from "../util/QueryKeys";
 import { GetLatestMoviesResponse } from "../types/getLatestMoviesResponseTypes";
 import MovieCard from "../components/MovieCard";
+import { getNextPageParam } from "react-query/types/core/infiniteQueryBehavior";
 
 const AllMoviesScreen = () => {
      const navigation = useNavigation()
-     const [page, setPage] = React.useState(1)
+     const [page, setPage] = useState(1)
 
      const fetchPopularMovies = (page = 1) =>
           fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`)
           .then(res => res.json())
-     const { isLoading, error, data,isFetching,isPreviousData } = useQuery<GetLatestMoviesResponse, Error>(
-          [QueryKeys.LATEST_MOVIES, page], () => fetchPopularMovies(page), { keepPreviousData : true })
+     const { isLoading, error, data,isFetching,isPreviousData,
+          isError,isLoadingError,isFetchingNextPage,hasNextPage,
+          fetchNextPage
+     } = useInfiniteQuery<GetLatestMoviesResponse, Error>(
+          [QueryKeys.LATEST_MOVIES],
+          ({ pageParam = 1 }) => fetchPopularMovies(pageParam),
+          {
+               getNextPageParam:(prevData) => {
+                    return prevData.page + 1
+               }
+          })
 
      return (
           <View style={styles.container}>
@@ -24,19 +34,14 @@ const AllMoviesScreen = () => {
                     <FlatList
                          style={styles.flatlist}
                          numColumns={2}
-                         data={data.results}
+                         data={data.pages.flatMap((pageData) => pageData.results)}
                          ListFooterComponent ={
-                         <View>
+                         <View style={styles.loadMoreView}>
                               {
                                    !isFetching && (
                                         <TouchableOpacity
-                                             onPress={() => {
-                                                  if (!isPreviousData && (data.total_pages > page)) {
-                                                       setPage(old => old + 1)
-                                                  }
-                                             }}
-                                             // Disable the Next Page button until we know a next page is available
-                                             disabled={isPreviousData || !(data.total_pages > page)}
+                                             style={styles.loadMoreButton}
+                                             onPress={() => fetchNextPage()}
                                         >
                                              <Text>Load More</Text>
                                         </TouchableOpacity>
@@ -45,10 +50,10 @@ const AllMoviesScreen = () => {
                          </View>
 
                          }
-                         keyExtractor={(item) => item.id }
-                         renderItem={(item) => {
+                         keyExtractor={(item,index) => item.id.toString() }
+                         renderItem={({ item }) => {
                               return(
-                                   <MovieCard movie={item.item}/>
+                                   <MovieCard movie={item}/>
                               )
                          }}/>
 
@@ -71,6 +76,23 @@ const styles = StyleSheet.create({
      flatlist:{
           flex:1,
 
+     },
+     loadMoreView:{
+          width:"100%",
+          height:50,
+
+          flexDirection:"row",
+          justifyContent:"center",
+          alignItems:"center",
+
+     },
+     loadMoreButton:{
+          justifyContent:"center",
+          alignItems:"center",
+          width:100,
+          height:30,
+          backgroundColor:'blue',
+          borderRadius:10,
      }
 })
 export default AllMoviesScreen;
