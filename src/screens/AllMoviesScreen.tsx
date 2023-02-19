@@ -15,9 +15,7 @@ const AllMoviesScreen = () => {
      const fetchPopularMovies = (page = 1) =>
           fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`)
           .then(res => res.json())
-     const { isLoading, error, data,isFetching,isPreviousData,
-          isError,isLoadingError,isFetchingNextPage,hasNextPage,
-          fetchNextPage
+     const { isLoading, error, data,isFetching,isFetched,fetchNextPage
      } = useInfiniteQuery<GetLatestMoviesResponse, Error>(
           [QueryKeys.LATEST_MOVIES],
           ({ pageParam = 1 }) => fetchPopularMovies(pageParam),
